@@ -9,10 +9,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Space Grotesk',sans-serif; background:#000; overflow-x:hidden; min-height:100vh; }
-        .bg-animated { position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at top,#0d2818 0%,#000 50%,#000 100%);z-index:-2; }
-        .grid-bg { position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,255,136,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.03) 1px,transparent 1px);background-size:50px 50px;z-index:-1;animation:gridMove 20s linear infinite; }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Space Grotesk',sans-serif;background:#000;overflow-x:hidden;min-height:100vh;}
+        .bg-animated{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at top,#0d2818 0%,#000 50%,#000 100%);z-index:-2;}
+        .grid-bg{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,255,136,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.03) 1px,transparent 1px);background-size:50px 50px;z-index:-1;animation:gridMove 20s linear infinite;}
         @keyframes gridMove{0%{transform:translateY(0)}100%{transform:translateY(50px)}}
         #particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
         .particle{position:absolute;background:#00ff88;border-radius:50%;animation:floatUp linear infinite;}
@@ -32,13 +32,11 @@
         .input-field{background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.25);color:#fff;transition:all .3s ease;outline:none;}
         .input-field:focus{border-color:rgba(0,255,136,.6);box-shadow:0 0 15px rgba(0,255,136,.15);background:rgba(0,255,136,.06);}
         .input-field::placeholder{color:rgba(255,255,255,.3);}
-        .input-field-red{background:rgba(255,50,50,.05);border:1px solid rgba(255,50,50,.3);color:#fff;transition:all .3s ease;outline:none;}
-        .input-field-red:focus{border-color:rgba(255,50,50,.7);box-shadow:0 0 15px rgba(255,50,50,.15);background:rgba(255,50,50,.08);}
-        .input-field-red::placeholder{color:rgba(255,255,255,.3);}
         .map-row{animation:rowIn .3s ease forwards;opacity:0;transform:translateX(-10px);}
         @keyframes rowIn{to{opacity:1;transform:translateX(0)}}
         .map-entry{animation:entryIn .35s ease forwards;opacity:0;transform:translateY(14px);}
         @keyframes entryIn{to{opacity:1;transform:translateY(0)}}
+        .map-entry.selected{border-color:rgba(255,80,80,.5)!important;background:linear-gradient(145deg,rgba(255,50,50,.08),rgba(255,50,50,.04))!important;}
         .status-badge{animation:badgeGlow 1.5s ease-in-out infinite;}
         @keyframes badgeGlow{0%,100%{box-shadow:0 0 8px #00ff88}50%{box-shadow:0 0 18px #00ff88}}
         .logo-img{width:44px;height:44px;border-radius:10px;object-fit:cover;box-shadow:0 4px 15px rgba(0,255,136,.3);}
@@ -58,12 +56,28 @@
         .save-indicator{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;padding:8px 18px;border-radius:30px;font-size:12px;font-weight:700;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.35);color:#00ff88;opacity:0;transition:opacity .3s ease;pointer-events:none;white-space:nowrap;}
         .save-indicator.show{opacity:1;}
 
+        /* Custom checkbox */
+        .map-checkbox{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:5px;border:1.5px solid rgba(255,80,80,.4);background:transparent;cursor:pointer;flex-shrink:0;transition:all .2s ease;position:relative;}
+        .map-checkbox:checked{background:linear-gradient(135deg,#ff4040,#cc0000);border-color:#ff4040;box-shadow:0 0 10px rgba(255,50,50,.4);}
+        .map-checkbox:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:white;font-size:11px;font-weight:900;}
+        .map-checkbox:hover{border-color:rgba(255,80,80,.8);}
+
+        /* Delete bar */
+        .delete-bar{transition:all .35s ease;overflow:hidden;}
+        .delete-bar.hidden-bar{max-height:0;opacity:0;margin-bottom:0;}
+        .delete-bar.visible-bar{max-height:80px;opacity:1;margin-bottom:12px;}
+
+        /* Select mode toggle */
+        .select-mode-btn{background:transparent;border:1px solid rgba(255,50,50,.3);color:#ff9090;transition:all .3s ease;cursor:pointer;font-size:12px;}
+        .select-mode-btn:hover{background:rgba(255,50,50,.08);border-color:rgba(255,50,50,.6);}
+        .select-mode-btn.active{background:rgba(255,50,50,.12);border-color:rgba(255,50,50,.6);color:#ff6060;}
+
         /* PASSWORD MODAL */
-        .modal-overlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);background:rgba(0,0,0,0.85);}
+        .modal-overlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);background:rgba(0,0,0,.85);}
         .modal-overlay.hidden{display:none;}
-        .modal-box{background:linear-gradient(145deg,rgba(0,0,0,.95),rgba(20,0,0,.95));border:1px solid rgba(255,50,50,.35);border-radius:24px;padding:32px;max-width:400px;width:100%;box-shadow:0 0 60px rgba(255,50,50,.15);animation:modalIn .3s ease;}
+        .modal-box{background:linear-gradient(145deg,rgba(0,0,0,.95),rgba(20,0,0,.95));border:1px solid rgba(255,50,50,.35);border-radius:24px;padding:32px;max-width:420px;width:100%;box-shadow:0 0 60px rgba(255,50,50,.15);animation:modalIn .3s ease;}
         @keyframes modalIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
-        .pw-input{background:rgba(255,50,50,.05);border:1px solid rgba(255,50,50,.3);color:#fff;outline:none;transition:all .3s ease;width:100%;padding:14px 16px;border-radius:12px;font-size:15px;font-family:'Space Grotesk',sans-serif;letter-spacing:2px;}
+        .pw-input{background:rgba(255,50,50,.05);border:1px solid rgba(255,50,50,.3);color:#fff;outline:none;transition:all .3s ease;width:100%;padding:14px 46px 14px 16px;border-radius:12px;font-size:15px;font-family:'Space Grotesk',sans-serif;letter-spacing:2px;}
         .pw-input:focus{border-color:rgba(255,50,50,.7);box-shadow:0 0 20px rgba(255,50,50,.15);}
         .pw-input::placeholder{color:rgba(255,255,255,.3);letter-spacing:0;}
         .pw-input.shake{animation:shake .4s ease;}
@@ -76,6 +90,11 @@
         .pw-dot.filled{background:#ff4040;box-shadow:0 0 8px rgba(255,50,50,.6);}
         .attempts-bar{height:3px;border-radius:2px;background:rgba(255,50,50,.15);overflow:hidden;margin-top:10px;}
         .attempts-fill{height:100%;background:linear-gradient(90deg,#ff4040,#ff0000);border-radius:2px;transition:width .4s ease;}
+
+        /* Preview list in modal */
+        .delete-preview{max-height:140px;overflow-y:auto;}
+        .delete-preview::-webkit-scrollbar{width:4px;}
+        .delete-preview::-webkit-scrollbar-thumb{background:rgba(255,50,50,.4);border-radius:2px;}
     </style>
 </head>
 <body class="text-gray-100">
@@ -89,29 +108,32 @@
 <!-- ===== PASSWORD MODAL ===== -->
 <div class="modal-overlay hidden" id="passwordModal">
     <div class="modal-box">
-        <!-- Icon -->
-        <div class="text-center mb-6">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background:rgba(255,50,50,.1);border:1px solid rgba(255,50,50,.3);">
-                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="text-center mb-5">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-3" style="background:rgba(255,50,50,.1);border:1px solid rgba(255,50,50,.3);">
+                <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
             </div>
-            <h3 class="text-2xl font-black logo-font" style="color:#ff6060;">AKSES TERBATAS</h3>
-            <p class="text-gray-400 text-sm mt-2">Masukkan password untuk menghapus semua data map list</p>
+            <h3 class="text-xl font-black logo-font" style="color:#ff6060;">KONFIRMASI HAPUS</h3>
+            <p class="text-gray-400 text-xs mt-1" id="modalSubtitle">Masukkan password untuk menghapus map yang dipilih</p>
         </div>
 
-        <!-- Warning -->
-        <div class="rounded-xl p-3 mb-5" style="background:rgba(255,50,50,.08);border:1px solid rgba(255,50,50,.2);">
+        <!-- Preview items to be deleted -->
+        <div id="deletePreviewSection" class="mb-4 rounded-xl p-3" style="background:rgba(255,50,50,.06);border:1px solid rgba(255,50,50,.2);">
+            <p class="text-xs font-bold text-red-400 mb-2" id="deletePreviewTitle">Map yang akan dihapus:</p>
+            <div class="delete-preview" id="deletePreviewList"></div>
+        </div>
+
+        <div class="rounded-xl p-3 mb-4" style="background:rgba(255,50,50,.08);border:1px solid rgba(255,50,50,.2);">
             <p class="text-xs text-red-400 font-semibold text-center">⚠️ Tindakan ini tidak dapat dibatalkan!</p>
         </div>
 
-        <!-- Password input -->
         <div class="mb-2">
-            <label class="block text-sm font-bold mb-2 text-red-400">🔑 Password</label>
+            <label class="block text-sm font-bold mb-2 text-red-400">🔑 Password Admin</label>
             <div class="relative">
                 <input type="password" id="clearPassword" class="pw-input" placeholder="Masukkan password..."
                     onkeydown="handlePasswordKey(event)" oninput="updateDots()">
-                <button onclick="togglePwVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors" id="eyeBtn">
+                <button onclick="togglePwVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
                     <svg id="eyeOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -121,7 +143,6 @@
                     </svg>
                 </button>
             </div>
-            <!-- Dots indicator -->
             <div class="pw-dots" id="pwDots">
                 <div class="pw-dot"></div><div class="pw-dot"></div><div class="pw-dot"></div>
                 <div class="pw-dot"></div><div class="pw-dot"></div><div class="pw-dot"></div>
@@ -129,21 +150,15 @@
             </div>
         </div>
 
-        <!-- Attempts -->
-        <div id="attemptsSection" class="hidden mb-4">
+        <div id="attemptsSection" class="hidden mb-3">
             <p class="text-xs text-red-400 text-center mb-1" id="attemptsText">Password salah!</p>
-            <div class="attempts-bar">
-                <div class="attempts-fill" id="attemptsFill" style="width:100%"></div>
-            </div>
+            <div class="attempts-bar"><div class="attempts-fill" id="attemptsFill" style="width:100%"></div></div>
         </div>
 
-        <!-- Buttons -->
-        <div class="flex gap-3 mt-5">
-            <button onclick="closePasswordModal()" class="outline-btn flex-1 py-3 rounded-xl font-bold text-sm">
-                Batal
-            </button>
-            <button onclick="confirmClear()" id="confirmClearBtn" class="clear-confirm-btn flex-1 py-3 rounded-xl font-black text-sm text-white">
-                🗑️ HAPUS SEMUA
+        <div class="flex gap-3 mt-4">
+            <button onclick="closePasswordModal()" class="outline-btn flex-1 py-3 rounded-xl font-bold text-sm">Batal</button>
+            <button onclick="confirmDelete()" id="confirmClearBtn" class="clear-confirm-btn flex-1 py-3 rounded-xl font-black text-sm text-white">
+                🗑️ HAPUS
             </button>
         </div>
     </div>
@@ -228,7 +243,7 @@
             </div>
 
             <div class="mb-5">
-                <label class="block text-sm font-bold mb-2 text-green-400">👤 Nama Owner <span class="text-gray-500 font-normal text-xs">(opsional, untuk semua map)</span></label>
+                <label class="block text-sm font-bold mb-2 text-green-400">👤 Nama Owner <span class="text-gray-500 font-normal text-xs">(opsional)</span></label>
                 <input type="text" id="ownerName" placeholder="Username Roblox kamu"
                     class="input-field w-full px-4 py-3 rounded-xl text-sm" oninput="saveFormDraft()">
             </div>
@@ -257,9 +272,7 @@
                     <span id="progressLabel">Mengirim...</span>
                     <span id="progressPct">0%</span>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
-                </div>
+                <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
             </div>
 
             <div class="mt-5 glass-card rounded-xl p-4 border border-blue-500/20 bg-blue-500/5">
@@ -272,7 +285,9 @@
         <!-- LIST PANEL -->
         <div class="flex flex-col gap-4">
             <div class="glass-card rounded-3xl p-6 md:p-8 border border-green-500/30 flex-1">
-                <div class="flex items-center justify-between mb-5">
+
+                <!-- Header row -->
+                <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 glass-card rounded-xl flex items-center justify-center">
                             <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,17 +301,35 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <span id="listCount" class="glass-card px-3 py-1 rounded-full text-xs font-bold text-green-400 status-badge">0 Maps</span>
-                        <!-- Clear button — now opens password modal -->
-                        <button onclick="openPasswordModal()" id="clearBtn"
-                            class="danger-btn px-3 py-1.5 rounded-lg text-xs hidden flex items-center gap-1.5 font-bold">
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        <!-- Select mode toggle -->
+                        <button onclick="toggleSelectMode()" id="selectModeBtn"
+                            class="select-mode-btn px-3 py-1.5 rounded-lg font-bold hidden items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            Clear
+                            <span id="selectModeLabel">Pilih</span>
                         </button>
                     </div>
                 </div>
 
+                <!-- Delete action bar (shows when items selected) -->
+                <div id="deleteBar" class="delete-bar hidden-bar rounded-xl p-3 flex items-center justify-between gap-3" style="background:rgba(255,50,50,.08);border:1px solid rgba(255,50,50,.25);">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-red-400" id="selectedCountText">0 dipilih</span>
+                        <button onclick="selectAll()" class="text-xs text-gray-400 hover:text-white transition-colors underline">Semua</button>
+                        <span class="text-gray-600">|</span>
+                        <button onclick="deselectAll()" class="text-xs text-gray-400 hover:text-white transition-colors underline">Batal semua</button>
+                    </div>
+                    <button onclick="openDeleteModal()" id="deleteSelectedBtn"
+                        class="danger-btn px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 disabled:opacity-40" disabled>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        Hapus Dipilih
+                    </button>
+                </div>
+
+                <!-- Saved badge -->
                 <div id="savedBadge" class="hidden mb-4 glass-card rounded-xl p-3 border border-green-500/20 bg-green-500/5 flex items-center gap-2">
                     <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
@@ -310,12 +343,12 @@
                     <p class="text-xs text-gray-600 mt-1">Map yang berhasil dikirim akan muncul di sini</p>
                 </div>
 
-                <div id="mapList" class="space-y-3 max-h-[480px] overflow-y-auto pr-1"></div>
+                <div id="mapList" class="space-y-3 max-h-[460px] overflow-y-auto pr-1"></div>
             </div>
 
             <div class="glass-card rounded-2xl p-4 border border-yellow-500/20 bg-yellow-500/5">
-                <p class="text-xs font-bold text-yellow-400 mb-1">💾 Auto-Save Info:</p>
-                <p class="text-xs text-gray-400">Map list tersimpan otomatis di browser. Untuk menghapus list diperlukan <span class="text-red-400 font-semibold">password admin</span>.</p>
+                <p class="text-xs font-bold text-yellow-400 mb-1">🔒 Info Keamanan:</p>
+                <p class="text-xs text-gray-400">Untuk menghapus map diperlukan <span class="text-red-400 font-semibold">password admin</span>. Kamu bisa pilih satu, beberapa, atau semua map sebelum menghapus.</p>
             </div>
         </div>
     </div>
@@ -327,7 +360,7 @@
         <img src="https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg" alt="Logo" class="logo-img w-9 h-9">
         <h1 class="text-xl font-black logo-font glow-text">WarpahExploits</h1>
     </div>
-    <p class="text-gray-500 text-sm">© 2025 WarpahExploits. All Rights Reserved.</p>
+    <p class="text-gray-500 text-sm">© 2024 WarpahExploits. All Rights Reserved.</p>
     <p class="text-green-400/60 text-xs mt-1">🇮🇩 Made with 💚 in Indonesia</p>
 </footer>
 
@@ -338,10 +371,10 @@
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1475522525252292722/As_x9OQT2uaICZ31pgTC4Guiemryrd-49qSaQohDKI-MJ8PF29axMTXVTG24MD-Ef613";
     // ============================================
 
-    const CLEAR_PASSWORD     = "WarpahExploits2026";
-    const MAX_ATTEMPTS       = 5;
-    const STORAGE_KEY_MAPS   = 'warpah_map_entries';
-    const STORAGE_KEY_DRAFT  = 'warpah_form_draft';
+    const CLEAR_PASSWORD    = "WarpahExploits2026";
+    const MAX_ATTEMPTS      = 5;
+    const STORAGE_KEY_MAPS  = 'warpah_map_entries';
+    const STORAGE_KEY_DRAFT = 'warpah_form_draft';
 
     let mapEntries   = [];
     let rows         = [];
@@ -350,14 +383,103 @@
     let pwAttempts   = 0;
     let pwLocked     = false;
     let lockTimer    = null;
+    let selectMode   = false;
+    let selectedIds  = new Set(); // set of placeId strings
+    let deleteTarget = 'selected'; // 'selected' or 'all'
+
+    // ============================================
+    // SELECT MODE
+    // ============================================
+    function toggleSelectMode() {
+        selectMode = !selectMode;
+        selectedIds.clear();
+        const btn   = document.getElementById('selectModeBtn');
+        const label = document.getElementById('selectModeLabel');
+        if (selectMode) {
+            btn.classList.add('active');
+            label.textContent = 'Selesai';
+        } else {
+            btn.classList.remove('active');
+            label.textContent = 'Pilih';
+        }
+        updateDeleteBar();
+        renderMapList();
+    }
+
+    function toggleSelect(placeId) {
+        if (selectedIds.has(placeId)) selectedIds.delete(placeId);
+        else selectedIds.add(placeId);
+        updateDeleteBar();
+        // update card highlight only (no full re-render)
+        const card = document.getElementById('card_' + placeId);
+        if (card) {
+            card.classList.toggle('selected', selectedIds.has(placeId));
+            const cb = card.querySelector('.map-checkbox');
+            if (cb) cb.checked = selectedIds.has(placeId);
+        }
+    }
+
+    function selectAll() {
+        mapEntries.forEach(e => selectedIds.add(e.placeId));
+        updateDeleteBar();
+        renderMapList();
+    }
+
+    function deselectAll() {
+        selectedIds.clear();
+        updateDeleteBar();
+        renderMapList();
+    }
+
+    function updateDeleteBar() {
+        const bar     = document.getElementById('deleteBar');
+        const delBtn  = document.getElementById('deleteSelectedBtn');
+        const countTx = document.getElementById('selectedCountText');
+        const n       = selectedIds.size;
+
+        countTx.textContent = n + ' dipilih';
+        delBtn.disabled = n === 0;
+
+        if (selectMode) {
+            bar.classList.remove('hidden-bar');
+            bar.classList.add('visible-bar');
+        } else {
+            bar.classList.add('hidden-bar');
+            bar.classList.remove('visible-bar');
+        }
+    }
 
     // ============================================
     // PASSWORD MODAL
     // ============================================
-    function openPasswordModal() {
-        if (mapEntries.length === 0) return;
+    function openDeleteModal() {
+        if (selectedIds.size === 0) { showToast('⚠️ Pilih minimal 1 map dulu!', 'error'); return; }
+        deleteTarget = 'selected';
+
+        // Build preview
+        const selected  = mapEntries.filter(e => selectedIds.has(e.placeId));
+        const isAll     = selected.length === mapEntries.length;
+        document.getElementById('modalSubtitle').textContent =
+            isAll ? 'Masukkan password untuk menghapus semua map'
+                  : 'Masukkan password untuk menghapus ' + selected.length + ' map yang dipilih';
+        document.getElementById('deletePreviewTitle').textContent =
+            'Map yang akan dihapus (' + selected.length + '):';
+        document.getElementById('deletePreviewList').innerHTML = selected.map(e => `
+            <div class="flex items-center gap-2 py-1 border-b border-red-500/10 last:border-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0"></span>
+                <span class="text-xs text-gray-300 truncate">${esc(e.mapName)}</span>
+                <span class="text-xs font-mono text-red-300/60 flex-shrink-0">${esc(e.placeId)}</span>
+            </div>
+        `).join('');
+
+        openModalCommon();
+    }
+
+    function openModalCommon() {
         document.getElementById('passwordModal').classList.remove('hidden');
         document.getElementById('clearPassword').value = '';
+        document.getElementById('clearPassword').disabled = false;
+        document.getElementById('confirmClearBtn').disabled = false;
         document.getElementById('attemptsSection').classList.add('hidden');
         updateDots();
         setTimeout(() => document.getElementById('clearPassword').focus(), 100);
@@ -368,106 +490,96 @@
         document.getElementById('clearPassword').value = '';
         document.getElementById('attemptsSection').classList.add('hidden');
         updateDots();
-        // reset attempts if modal closed cleanly
         if (!pwLocked) pwAttempts = 0;
     }
 
     function handlePasswordKey(e) {
-        if (e.key === 'Enter') confirmClear();
+        if (e.key === 'Enter') confirmDelete();
         if (e.key === 'Escape') closePasswordModal();
     }
 
     function togglePwVisibility() {
-        const input = document.getElementById('clearPassword');
-        const open  = document.getElementById('eyeOpen');
+        const input  = document.getElementById('clearPassword');
+        const open   = document.getElementById('eyeOpen');
         const closed = document.getElementById('eyeClosed');
         if (input.type === 'password') {
-            input.type = 'text';
-            open.classList.add('hidden');
-            closed.classList.remove('hidden');
+            input.type = 'text'; open.classList.add('hidden'); closed.classList.remove('hidden');
         } else {
-            input.type = 'password';
-            open.classList.remove('hidden');
-            closed.classList.add('hidden');
+            input.type = 'password'; open.classList.remove('hidden'); closed.classList.add('hidden');
         }
     }
 
     function updateDots() {
         const val  = document.getElementById('clearPassword').value;
         const dots = document.querySelectorAll('.pw-dot');
-        dots.forEach((dot, i) => {
-            dot.classList.toggle('filled', i < val.length);
-        });
+        dots.forEach((d, i) => d.classList.toggle('filled', i < val.length));
     }
 
-    function confirmClear() {
-        if (pwLocked) {
-            showToast('🔒 Terlalu banyak percobaan! Tunggu 30 detik.', 'error');
-            return;
-        }
+    function confirmDelete() {
+        if (pwLocked) { showToast('🔒 Terlalu banyak percobaan! Tunggu 30 detik.', 'error'); return; }
 
-        const input    = document.getElementById('clearPassword');
-        const entered  = input.value;
-        const btn      = document.getElementById('confirmClearBtn');
-        const attempts = document.getElementById('attemptsSection');
-        const attText  = document.getElementById('attemptsText');
-        const attFill  = document.getElementById('attemptsFill');
+        const input   = document.getElementById('clearPassword');
+        const entered = input.value;
+        const btn     = document.getElementById('confirmClearBtn');
+        const attSec  = document.getElementById('attemptsSection');
+        const attText = document.getElementById('attemptsText');
+        const attFill = document.getElementById('attemptsFill');
 
         if (entered === CLEAR_PASSWORD) {
-            // ✅ Correct
             pwAttempts = 0;
+            const toDelete = new Set(selectedIds);
             closePasswordModal();
-            // actual clear
-            mapEntries = [];
+
+            // Perform delete
+            const before = mapEntries.length;
+            mapEntries = mapEntries.filter(e => !toDelete.has(e.placeId));
             saveMapEntries();
+
+            const removed = before - mapEntries.length;
+            selectedIds.clear();
+
+            // Exit select mode
+            selectMode = false;
+            document.getElementById('selectModeBtn').classList.remove('active');
+            document.getElementById('selectModeLabel').textContent = 'Pilih';
+            updateDeleteBar();
             renderMapList();
-            showToast('🗑️ Semua map berhasil dihapus', 'info');
+            showToast('🗑️ ' + removed + ' map berhasil dihapus', 'info');
         } else {
-            // ❌ Wrong
             pwAttempts++;
             input.value = '';
             updateDots();
-
-            // Shake animation
             input.classList.remove('shake');
             void input.offsetWidth;
             input.classList.add('shake');
             setTimeout(() => input.classList.remove('shake'), 400);
 
             const remaining = MAX_ATTEMPTS - pwAttempts;
-            attempts.classList.remove('hidden');
+            attSec.classList.remove('hidden');
 
             if (pwAttempts >= MAX_ATTEMPTS) {
-                // Lock for 30 seconds
                 pwLocked = true;
                 btn.disabled = true;
                 input.disabled = true;
                 attText.textContent = '🔒 Terlalu banyak percobaan! Menunggu 30 detik...';
-                attFill.style.width = '100%';
-                attFill.style.background = '#ff0000';
-
-                let countdown = 30;
+                attFill.style.width = '100%'; attFill.style.background = '#ff0000';
+                let cd = 30;
                 lockTimer = setInterval(() => {
-                    countdown--;
-                    attText.textContent = `🔒 Locked! Tunggu ${countdown} detik...`;
-                    attFill.style.width = (countdown / 30 * 100) + '%';
-                    if (countdown <= 0) {
+                    cd--;
+                    attText.textContent = `🔒 Locked! Tunggu ${cd} detik...`;
+                    attFill.style.width = (cd / 30 * 100) + '%';
+                    if (cd <= 0) {
                         clearInterval(lockTimer);
-                        pwLocked    = false;
-                        pwAttempts  = 0;
-                        btn.disabled   = false;
-                        input.disabled = false;
+                        pwLocked = false; pwAttempts = 0;
+                        btn.disabled = false; input.disabled = false;
                         attText.textContent = 'Silakan coba lagi.';
-                        attFill.style.width = '100%';
-                        attFill.style.background = '';
+                        attFill.style.width = '100%'; attFill.style.background = '';
                         input.focus();
                     }
                 }, 1000);
-
                 showToast('🔒 Akses dikunci 30 detik!', 'error');
             } else {
-                const pct = (remaining / MAX_ATTEMPTS) * 100;
-                attFill.style.width = pct + '%';
+                attFill.style.width = (remaining / MAX_ATTEMPTS * 100) + '%';
                 attText.textContent = `❌ Password salah! Sisa percobaan: ${remaining}`;
                 showToast('❌ Password salah! Sisa ' + remaining + ' percobaan', 'error');
                 setTimeout(() => input.focus(), 100);
@@ -475,7 +587,6 @@
         }
     }
 
-    // Close modal on overlay click
     document.getElementById('passwordModal').addEventListener('click', function(e) {
         if (e.target === this) closePasswordModal();
     });
@@ -546,7 +657,7 @@
         t.className = `toast toast-${type}`;
         t.textContent = msg;
         document.body.appendChild(t);
-        setTimeout(() => { t.style.transition='opacity 0.3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3500);
+        setTimeout(() => { t.style.transition = 'opacity 0.3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 3500);
     }
 
     function esc(s) {
@@ -557,7 +668,7 @@
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
     // ============================================
-    // ROWS
+    // FORM ROWS
     // ============================================
     function addRow(mapName = '', placeId = '') {
         rowId++;
@@ -565,18 +676,13 @@
         renderRows();
         updateQueueCount();
         saveFormDraft();
-        setTimeout(() => {
-            const el = document.getElementById('mapName_' + rowId);
-            if (el && !mapName) el.focus();
-        }, 120);
+        setTimeout(() => { const el = document.getElementById('mapName_' + rowId); if (el && !mapName) el.focus(); }, 120);
     }
 
     function removeRow(id) {
         if (rows.length <= 1) { showToast('⚠️ Minimal harus ada 1 map!', 'error'); return; }
         rows = rows.filter(r => r.id !== id);
-        renderRows();
-        updateQueueCount();
-        saveFormDraft();
+        renderRows(); updateQueueCount(); saveFormDraft();
     }
 
     function syncRow(id) {
@@ -595,7 +701,7 @@
         container.innerHTML = rows.map((row, idx) => `
             <div class="map-row glass-card rounded-xl p-4 border border-green-500/15" id="row_${row.id}" style="animation-delay:${idx*.04}s">
                 <div class="flex items-center gap-2 mb-3">
-                    <div class="row-num">#${String(idx+1).padStart(2,'0')}</div>
+                    <div class="row-num">#${String(idx+1).padStart(2,'00')}</div>
                     <span class="text-xs text-gray-400 flex-1 font-semibold">Map Entry</span>
                     ${rows.length > 1 ? `
                     <button onclick="removeRow(${row.id})" class="danger-btn px-2 py-1 rounded-lg text-xs flex items-center gap-1">
@@ -639,21 +745,13 @@
                 { name: '📝 Catatan',  value: data.note || '*Tidak ada catatan*', inline: false },
                 { name: '🕒 Waktu',    value: now, inline: false }
             ],
-            footer: {
-                text: 'WarpahExploits - Map Anti-Cheat Registry',
-                icon_url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg'
-            },
+            footer: { text: 'WarpahExploits - Map Anti-Cheat Registry', icon_url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg' },
             timestamp: new Date().toISOString(),
             thumbnail: { url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg' }
         };
         const res = await fetch(DISCORD_WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                username: 'WarpahExploits | Map Registry',
-                avatar_url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg',
-                embeds: [embed]
-            })
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: 'WarpahExploits | Map Registry', avatar_url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg', embeds: [embed] })
         });
         if (!res.ok) throw new Error('Webhook error: ' + res.status);
         return true;
@@ -672,8 +770,7 @@
 
         const ownerName = document.getElementById('ownerName').value.trim();
         const note      = document.getElementById('globalNote').value.trim();
-        const errors    = [];
-        const seenIds   = new Set();
+        const errors = []; const seenIds = new Set();
 
         rows.forEach((row, idx) => {
             const num = idx + 1;
@@ -682,24 +779,19 @@
             if (!/^\d+$/.test(row.placeId)) { errors.push('Baris #' + num + ': Place ID hanya boleh angka!'); return; }
             if (seenIds.has(row.placeId)) { errors.push('Baris #' + num + ': Place ID ' + row.placeId + ' duplikat!'); return; }
             seenIds.add(row.placeId);
-            if (mapEntries.find(e => e.placeId === row.placeId)) {
-                errors.push('Baris #' + num + ': Place ID ' + row.placeId + ' sudah terdaftar!');
-            }
+            if (mapEntries.find(e => e.placeId === row.placeId)) errors.push('Baris #' + num + ': Place ID ' + row.placeId + ' sudah terdaftar!');
         });
 
         if (errors.length > 0) { showToast('⚠️ ' + errors[0], 'error'); return; }
-        if (DISCORD_WEBHOOK_URL === 'GANTI_DENGAN_WEBHOOK_URL_KAMU_DISINI') {
-            showToast('⚠️ Webhook URL belum diatur!', 'error'); return;
-        }
+        if (DISCORD_WEBHOOK_URL === 'GANTI_DENGAN_WEBHOOK_URL_KAMU_DISINI') { showToast('⚠️ Webhook URL belum diatur!', 'error'); return; }
 
-        const btn    = document.getElementById('submitBtn');
+        const btn = document.getElementById('submitBtn');
         const btnTxt = document.getElementById('btnText');
         btn.disabled = true;
         document.getElementById('summaryBar').classList.remove('hidden');
 
-        const total   = rows.length;
-        let success   = 0;
-        const failed  = [];
+        const total = rows.length;
+        let success = 0; const failed = [];
         const timeNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         const dateNow = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 
@@ -713,8 +805,7 @@
             try {
                 await sendOneToDiscord({ mapName: row.mapName, placeId: row.placeId, ownerName, note }, i+1, total);
                 mapEntries.push({ mapName: row.mapName, placeId: row.placeId, ownerName, note, time: timeNow, date: dateNow });
-                saveMapEntries();
-                success++;
+                saveMapEntries(); success++;
                 if (i < rows.length - 1) await sleep(600);
             } catch(err) { console.error(err); failed.push(row.mapName); }
         }
@@ -725,7 +816,7 @@
         renderMapList();
 
         if (failed.length === 0) {
-            showToast('✅ ' + success + ' map berhasil didaftarkan & tersimpan!', 'success');
+            showToast('✅ ' + success + ' map berhasil didaftarkan!', 'success');
             rows = [];
             document.getElementById('ownerName').value = '';
             document.getElementById('globalNote').value = '';
@@ -744,26 +835,41 @@
     // RENDER MAP LIST
     // ============================================
     function renderMapList() {
-        const list    = document.getElementById('mapList');
-        const empty   = document.getElementById('emptyState');
-        const count   = document.getElementById('listCount');
-        const totalEl = document.getElementById('totalMaps');
-        const clearBtn = document.getElementById('clearBtn');
+        const list     = document.getElementById('mapList');
+        const empty    = document.getElementById('emptyState');
+        const count    = document.getElementById('listCount');
+        const totalEl  = document.getElementById('totalMaps');
+        const selBtn   = document.getElementById('selectModeBtn');
         const n = mapEntries.length;
+
         count.textContent = n + ' Maps';
         totalEl.textContent = n;
-        clearBtn.classList.toggle('hidden', n === 0);
+        selBtn.classList.toggle('hidden', n === 0);
+        selBtn.style.display = n === 0 ? 'none' : 'flex';
+
         if (n === 0) { empty.style.display = 'block'; list.innerHTML = ''; return; }
         empty.style.display = 'none';
+
         const rev = [...mapEntries].reverse();
-        list.innerHTML = rev.map((entry, idx) => `
-            <div class="glass-card rounded-xl p-4 border border-green-500/15 map-entry" style="animation-delay:${Math.min(idx,10)*.04}s">
-                <div class="flex items-start justify-between gap-3">
+        list.innerHTML = rev.map((entry, idx) => {
+            const isSelected = selectedIds.has(entry.placeId);
+            return `
+            <div class="glass-card rounded-xl p-4 border border-green-500/15 map-entry ${isSelected ? 'selected' : ''}"
+                id="card_${entry.placeId}"
+                style="animation-delay:${Math.min(idx,10)*.04}s; cursor:${selectMode ? 'pointer' : 'default'}"
+                onclick="${selectMode ? `toggleSelect('${entry.placeId}')` : ''}">
+                <div class="flex items-start gap-3">
+                    <!-- Checkbox (only in select mode) -->
+                    ${selectMode ? `
+                    <div class="pt-0.5">
+                        <input type="checkbox" class="map-checkbox" ${isSelected ? 'checked' : ''}
+                            onclick="event.stopPropagation(); toggleSelect('${entry.placeId}')">
+                    </div>` : ''}
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1.5">
                             <span class="text-xs font-bold text-green-400 glass-card px-2 py-0.5 rounded-full">#${String(mapEntries.length-idx).padStart(2,'0')}</span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 status-badge flex-shrink-0"></span>
-                            <span class="text-xs text-green-400/60">Protected</span>
+                            <span class="w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-red-400' : 'bg-green-400'} status-badge flex-shrink-0"></span>
+                            <span class="text-xs ${isSelected ? 'text-red-400/70' : 'text-green-400/60'}">${isSelected ? 'Dipilih' : 'Protected'}</span>
                         </div>
                         <h4 class="font-bold text-white text-sm truncate">${esc(entry.mapName)}</h4>
                         <div class="flex items-center gap-1 mt-1 flex-wrap">
@@ -777,8 +883,8 @@
                         <p class="text-xs text-gray-600">${entry.time}</p>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
     }
 
     // ============================================
@@ -797,9 +903,8 @@
         if (draft) {
             document.getElementById('ownerName').value = draft.ownerName || '';
             document.getElementById('globalNote').value = draft.note || '';
-            if (draft.rows && draft.rows.length > 0) {
-                draft.rows.forEach(r => addRow(r.mapName || '', r.placeId || ''));
-            } else { addRow(); }
+            if (draft.rows && draft.rows.length > 0) draft.rows.forEach(r => addRow(r.mapName||'', r.placeId||''));
+            else addRow();
         } else { addRow(); }
     }
 
