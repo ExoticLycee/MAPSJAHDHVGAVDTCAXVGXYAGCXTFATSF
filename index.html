@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WarpahExploits - Map Anti-Cheat Registry</title>
+    <link rel="icon" type="image/png" href="https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg">
+    <link rel="shortcut icon" type="image/png" href="https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Space Grotesk',sans-serif; background:#000; overflow-x:hidden; min-height:100vh; }
+        .bg-animated { position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at top,#0d2818 0%,#000 50%,#000 100%);z-index:-2; }
+        .grid-bg { position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,255,136,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.03) 1px,transparent 1px);background-size:50px 50px;z-index:-1;animation:gridMove 20s linear infinite; }
+        @keyframes gridMove{0%{transform:translateY(0)}100%{transform:translateY(50px)}}
+        #particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;}
+        .particle{position:absolute;background:#00ff88;border-radius:50%;animation:floatUp linear infinite;}
+        @keyframes floatUp{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100vh) scale(1);opacity:0}}
+        .logo-font{font-family:'Orbitron',sans-serif;}
+        .glow-text{text-shadow:0 0 10px #00ff88,0 0 20px #00ff88,0 0 30px #00ff88;animation:glowPulse 2s ease-in-out infinite;}
+        @keyframes glowPulse{0%,100%{text-shadow:0 0 10px #00ff88,0 0 20px #00ff88,0 0 30px #00ff88}50%{text-shadow:0 0 20px #00ff88,0 0 35px #00ff88,0 0 50px #00ff88}}
+        .glass-card{background:linear-gradient(145deg,rgba(0,255,136,.05),rgba(0,255,136,.02));backdrop-filter:blur(10px);border:1px solid rgba(0,255,136,.2);box-shadow:0 8px 32px rgba(0,255,136,.1);}
+        .neon-btn{position:relative;overflow:hidden;background:linear-gradient(135deg,#00ff88 0%,#00aa55 100%);box-shadow:0 0 20px rgba(0,255,136,.5);transition:all .3s ease;border:none;cursor:pointer;}
+        .neon-btn:hover{transform:translateY(-2px);box-shadow:0 0 35px rgba(0,255,136,.8);}
+        .neon-btn:active{transform:translateY(0);}
+        .neon-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+        .outline-btn{background:transparent;border:1px solid rgba(0,255,136,.4);color:#00ff88;transition:all .3s ease;cursor:pointer;}
+        .outline-btn:hover{background:rgba(0,255,136,.08);border-color:rgba(0,255,136,.7);box-shadow:0 0 15px rgba(0,255,136,.2);}
+        .danger-btn{background:transparent;border:1px solid rgba(255,50,50,.35);color:#ff6060;transition:all .3s ease;cursor:pointer;}
+        .danger-btn:hover{background:rgba(255,50,50,.1);border-color:rgba(255,50,50,.6);}
+        .input-field{background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.25);color:#fff;transition:all .3s ease;outline:none;}
+        .input-field:focus{border-color:rgba(0,255,136,.6);box-shadow:0 0 15px rgba(0,255,136,.15);background:rgba(0,255,136,.06);}
+        .input-field::placeholder{color:rgba(255,255,255,.3);}
+        .map-row{animation:rowIn .3s ease forwards;opacity:0;transform:translateX(-10px);}
+        @keyframes rowIn{to{opacity:1;transform:translateX(0)}}
+        .map-entry{animation:entryIn .35s ease forwards;opacity:0;transform:translateY(14px);}
+        @keyframes entryIn{to{opacity:1;transform:translateY(0)}}
+        .status-badge{animation:badgeGlow 1.5s ease-in-out infinite;}
+        @keyframes badgeGlow{0%,100%{box-shadow:0 0 8px #00ff88}50%{box-shadow:0 0 18px #00ff88}}
+        .logo-img{width:44px;height:44px;border-radius:10px;object-fit:cover;box-shadow:0 4px 15px rgba(0,255,136,.3);}
+        ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#000}::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#00ff88,#00aa55);border-radius:3px}
+        .scan-line{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,#00ff88,transparent);animation:scan 4s linear infinite;z-index:999;opacity:.4;pointer-events:none;}
+        @keyframes scan{0%{top:0}100%{top:100vh}}
+        .toast{position:fixed;top:80px;right:20px;z-index:9999;padding:14px 22px;border-radius:14px;font-weight:700;font-size:14px;animation:toastIn .3s ease;max-width:320px;}
+        @keyframes toastIn{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:translateX(0)}}
+        .toast-success{background:rgba(0,255,136,.15);border:1px solid rgba(0,255,136,.5);color:#00ff88;}
+        .toast-error{background:rgba(255,50,50,.15);border:1px solid rgba(255,50,50,.5);color:#ff6060;}
+        .toast-info{background:rgba(50,150,255,.15);border:1px solid rgba(50,150,255,.5);color:#60aaff;}
+        .shield-icon{animation:shieldPulse 3s ease-in-out infinite;}
+        @keyframes shieldPulse{0%,100%{filter:drop-shadow(0 0 6px #00ff88)}50%{filter:drop-shadow(0 0 18px #00ff88)}}
+        .progress-bar{height:4px;border-radius:2px;background:rgba(0,255,136,.15);overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#00ff88,#00aa55);border-radius:2px;transition:width .4s ease;}
+        .row-num{min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:rgba(0,255,136,.1);color:#00ff88;border:1px solid rgba(0,255,136,.25);flex-shrink:0;}
+        .save-indicator{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;padding:8px 18px;border-radius:30px;font-size:12px;font-weight:700;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.35);color:#00ff88;opacity:0;transition:opacity .3s ease;pointer-events:none;}
+        .save-indicator.show{opacity:1;}
+    </style>
+</head>
+<body class="text-gray-100">
+
+<div class="scan-line"></div>
+<div class="bg-animated"></div>
+<div class="grid-bg"></div>
+<div id="particles"></div>
+
+<!-- Auto-save indicator -->
+<div class="save-indicator" id="saveIndicator">💾 Tersimpan otomatis</div>
+
+<!-- HEADER -->
+<header class="fixed top-0 w-full z-50 glass-card border-b border-green-500/30">
+    <nav class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <img src="https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg" alt="Logo" class="logo-img">
+            <div>
+                <h1 class="text-xl md:text-2xl font-black logo-font glow-text">WarpahExploits</h1>
+                <p class="text-xs text-green-400/70">Map Anti-Cheat Registry</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <!-- Storage info -->
+            <div class="glass-card px-3 py-2 rounded-xl flex items-center gap-2 cursor-pointer" title="Data tersimpan di browser" id="storageInfo">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                </svg>
+                <span class="text-xs text-green-400 font-semibold hidden sm:inline" id="storageLabel">AUTO-SAVE ON</span>
+            </div>
+            <div class="glass-card px-3 py-2 rounded-xl flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-green-400 status-badge"></div>
+                <span class="text-xs text-green-400 font-semibold hidden sm:inline">SYSTEM ONLINE</span>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- HERO -->
+<section class="container mx-auto px-4 pt-28 pb-8 text-center">
+    <div class="max-w-3xl mx-auto">
+        <div class="inline-block mb-5">
+            <svg class="w-16 h-16 mx-auto text-green-400 shield-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+        </div>
+        <h2 class="text-4xl md:text-6xl font-black logo-font glow-text mb-3">MAP REGISTRY</h2>
+        <p class="text-green-400 font-semibold mb-2">Anti-Cheat Protection System</p>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto">Daftarkan satu atau banyak map Roblox sekaligus. Data <strong class="text-green-400">tersimpan otomatis</strong> di browser — tidak hilang walaupun halaman di-refresh.</p>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="container mx-auto px-4 pb-8">
+    <div class="grid grid-cols-3 gap-3 max-w-xl mx-auto">
+        <div class="glass-card rounded-2xl p-4 text-center">
+            <div class="text-2xl md:text-3xl font-black text-green-400 logo-font" id="totalMaps">0</div>
+            <div class="text-xs text-gray-400 mt-1">Maps Terdaftar</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+            <div class="text-2xl md:text-3xl font-black text-green-400 logo-font" id="queueCount">1</div>
+            <div class="text-xs text-gray-400 mt-1">Antrian</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+            <div class="text-xl font-black text-green-400 logo-font">💾</div>
+            <div class="text-xs text-gray-400 mt-1">Auto-Saved</div>
+        </div>
+    </div>
+</section>
+
+<!-- MAIN -->
+<main class="container mx-auto px-4 pb-20">
+    <div class="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+
+        <!-- FORM PANEL -->
+        <div class="glass-card rounded-3xl p-6 md:p-8 border border-green-500/30">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 glass-card rounded-xl flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black logo-font text-green-400">DAFTARKAN MAP</h3>
+                        <p class="text-xs text-gray-400">Bisa tambah banyak map sekaligus</p>
+                    </div>
+                </div>
+                <span id="rowCountBadge" class="glass-card px-3 py-1 rounded-full text-xs font-bold text-green-400">1 Map</span>
+            </div>
+
+            <!-- Owner name shared -->
+            <div class="mb-5">
+                <label class="block text-sm font-bold mb-2 text-green-400">👤 Nama Owner <span class="text-gray-500 font-normal text-xs">(opsional, untuk semua map)</span></label>
+                <input type="text" id="ownerName" placeholder="Username Roblox kamu"
+                    class="input-field w-full px-4 py-3 rounded-xl text-sm"
+                    oninput="saveFormDraft()">
+            </div>
+
+            <!-- MAP ROWS -->
+            <div id="mapRowsContainer" class="space-y-3 mb-4"></div>
+
+            <!-- ADD ROW -->
+            <button type="button" onclick="addRow()" class="outline-btn w-full py-3 rounded-xl font-bold text-sm mb-5 flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                + TAMBAH MAP LAGI
+            </button>
+
+            <!-- Notes shared -->
+            <div class="mb-6">
+                <label class="block text-sm font-bold mb-2 text-green-400">📝 Catatan <span class="text-gray-500 font-normal text-xs">(opsional)</span></label>
+                <textarea id="globalNote" rows="2" placeholder="Catatan tambahan untuk semua map..."
+                    class="input-field w-full px-4 py-3 rounded-xl text-sm resize-none"
+                    oninput="saveFormDraft()"></textarea>
+            </div>
+
+            <!-- SUBMIT ALL -->
+            <button id="submitBtn" onclick="submitAll()" class="neon-btn w-full py-4 rounded-xl font-black text-lg text-black">
+                <span id="btnText">🛡️ KIRIM SEMUA MAP</span>
+            </button>
+
+            <!-- Progress -->
+            <div id="summaryBar" class="mt-4 hidden">
+                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                    <span id="progressLabel">Mengirim...</span>
+                    <span id="progressPct">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                </div>
+            </div>
+
+            <!-- Hint -->
+            <div class="mt-5 glass-card rounded-xl p-4 border border-blue-500/20 bg-blue-500/5">
+                <p class="text-xs font-bold text-blue-400 mb-1">💡 Cara Cari Place ID:</p>
+                <p class="text-xs text-gray-400">Buka game di browser Roblox → lihat URL:<br>
+                <span class="font-mono text-green-400">roblox.com/games/<strong class="text-white">189707</strong>/nama-game</span><br>
+                Angka setelah <span class="font-mono text-white">/games/</span> adalah Place ID.</p>
+            </div>
+        </div>
+
+        <!-- LIST PANEL -->
+        <div class="flex flex-col gap-4">
+            <div class="glass-card rounded-3xl p-6 md:p-8 border border-green-500/30 flex-1">
+                <div class="flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 glass-card rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black logo-font text-green-400">MAP LIST</h3>
+                            <p class="text-xs text-gray-400">Anti-Cheat Protected Maps</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="listCount" class="glass-card px-3 py-1 rounded-full text-xs font-bold text-green-400 status-badge">0 Maps</span>
+                        <button onclick="clearList()" id="clearBtn" class="danger-btn px-2 py-1 rounded-lg text-xs hidden">✕ Clear</button>
+                    </div>
+                </div>
+
+                <!-- saved badge -->
+                <div id="savedBadge" class="hidden mb-4 glass-card rounded-xl p-3 border border-green-500/20 bg-green-500/5 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                    </svg>
+                    <span class="text-xs text-green-400 font-semibold" id="savedBadgeText">Data dimuat dari penyimpanan lokal</span>
+                </div>
+
+                <div id="emptyState" class="text-center py-14">
+                    <div class="text-5xl mb-3">🗺️</div>
+                    <p class="text-gray-500 font-semibold text-sm">Belum ada map terdaftar</p>
+                    <p class="text-xs text-gray-600 mt-1">Map yang berhasil dikirim akan muncul di sini</p>
+                </div>
+
+                <div id="mapList" class="space-y-3 max-h-[480px] overflow-y-auto pr-1"></div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 border border-yellow-500/20 bg-yellow-500/5">
+                <p class="text-xs font-bold text-yellow-400 mb-1">💾 Auto-Save Info:</p>
+                <p class="text-xs text-gray-400">Map list tersimpan otomatis di browser (localStorage). Data tetap ada walaupun halaman ditutup atau di-refresh. Data hanya hilang jika kamu klik <span class="text-red-400 font-semibold">Clear</span> atau hapus cache browser.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="container mx-auto px-4 py-10 border-t border-green-500/20 text-center">
+    <div class="flex items-center justify-center gap-3 mb-3">
+        <img src="https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg" alt="Logo" class="logo-img w-9 h-9">
+        <h1 class="text-xl font-black logo-font glow-text">WarpahExploits</h1>
+    </div>
+    <p class="text-gray-500 text-sm">© 2024 WarpahExploits. All Rights Reserved.</p>
+    <p class="text-green-400/60 text-xs mt-1">🇮🇩 Made with 💚 in Indonesia</p>
+</footer>
+
+<script>
+    // ============================================
+    // ⚠️ GANTI WEBHOOK URL DI SINI ⚠️
+    // ============================================
+    const DISCORD_WEBHOOK_URL = "GANTI_DENGAN_WEBHOOK_URL_KAMU_DISINI";
+    // ============================================
+
+    const STORAGE_KEY_MAPS   = 'warpah_map_entries';
+    const STORAGE_KEY_DRAFT  = 'warpah_form_draft';
+
+    let mapEntries = [];
+    let rows = [];
+    let rowId = 0;
+    let saveTimer = null;
+
+    // ============================================
+    // LOCALSTORAGE HELPERS
+    // ============================================
+    function saveMapEntries() {
+        try {
+            localStorage.setItem(STORAGE_KEY_MAPS, JSON.stringify(mapEntries));
+        } catch(e) { console.warn('localStorage full:', e); }
+    }
+
+    function loadMapEntries() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY_MAPS);
+            return raw ? JSON.parse(raw) : [];
+        } catch(e) { return []; }
+    }
+
+    function saveFormDraft() {
+        // debounce 600ms
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+            try {
+                // sync rows first
+                rows.forEach(row => {
+                    const n = document.getElementById('mapName_' + row.id);
+                    const p = document.getElementById('placeId_' + row.id);
+                    if (n) row.mapName = n.value;
+                    if (p) row.placeId = p.value;
+                });
+                const draft = {
+                    ownerName: document.getElementById('ownerName').value,
+                    note: document.getElementById('globalNote').value,
+                    rows: rows.map(r => ({ mapName: r.mapName || '', placeId: r.placeId || '' }))
+                };
+                localStorage.setItem(STORAGE_KEY_DRAFT, JSON.stringify(draft));
+                flashSaveIndicator();
+            } catch(e) {}
+        }, 600);
+    }
+
+    function loadFormDraft() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY_DRAFT);
+            return raw ? JSON.parse(raw) : null;
+        } catch(e) { return null; }
+    }
+
+    function flashSaveIndicator() {
+        const el = document.getElementById('saveIndicator');
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 1800);
+    }
+
+    // ============================================
+    // PARTICLES
+    // ============================================
+    (function() {
+        const c = document.getElementById('particles');
+        const n = window.innerWidth < 768 ? 12 : 22;
+        for (let i = 0; i < n; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            const s = (Math.random() * 3 + 1) + 'px';
+            p.style.width = s; p.style.height = s;
+            p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            p.style.animationDelay = (Math.random() * 5) + 's';
+            p.style.opacity = Math.random() * 0.4 + 0.1;
+            c.appendChild(p);
+        }
+    })();
+
+    // ============================================
+    // TOAST
+    // ============================================
+    function showToast(msg, type = 'success') {
+        document.querySelectorAll('.toast').forEach(t => t.remove());
+        const t = document.createElement('div');
+        t.className = `toast toast-${type}`;
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(() => { t.style.transition='opacity 0.3s'; t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3500);
+    }
+
+    function esc(s) {
+        const d = document.createElement('div');
+        d.textContent = String(s || '');
+        return d.innerHTML;
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    // ============================================
+    // ROW MANAGEMENT
+    // ============================================
+    function addRow(mapName = '', placeId = '') {
+        rowId++;
+        rows.push({ id: rowId, mapName, placeId });
+        renderRows();
+        updateQueueCount();
+        saveFormDraft();
+        setTimeout(() => {
+            const el = document.getElementById('mapName_' + rowId);
+            if (el && !mapName) el.focus();
+        }, 120);
+    }
+
+    function removeRow(id) {
+        if (rows.length <= 1) {
+            showToast('⚠️ Minimal harus ada 1 map!', 'error');
+            return;
+        }
+        rows = rows.filter(r => r.id !== id);
+        renderRows();
+        updateQueueCount();
+        saveFormDraft();
+    }
+
+    function syncRow(id) {
+        const row = rows.find(r => r.id === id);
+        if (!row) return;
+        const n = document.getElementById('mapName_' + id);
+        const p = document.getElementById('placeId_' + id);
+        if (n) row.mapName = n.value;
+        if (p) row.placeId = p.value;
+        saveFormDraft();
+    }
+
+    function renderRows() {
+        const container = document.getElementById('mapRowsContainer');
+        document.getElementById('rowCountBadge').textContent = rows.length + ' Map' + (rows.length > 1 ? 's' : '');
+
+        container.innerHTML = rows.map((row, idx) => `
+            <div class="map-row glass-card rounded-xl p-4 border border-green-500/15" id="row_${row.id}" style="animation-delay:${idx * 0.04}s">
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="row-num">#${String(idx + 1).padStart(2, '0')}</div>
+                    <span class="text-xs text-gray-400 flex-1 font-semibold">Map Entry</span>
+                    ${rows.length > 1 ? `
+                    <button onclick="removeRow(${row.id})" class="danger-btn px-2 py-1 rounded-lg text-xs flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        Hapus
+                    </button>` : ''}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1 text-green-400/80">🗺️ Nama Map <span class="text-red-400">*</span></label>
+                        <input type="text" id="mapName_${row.id}"
+                            value="${esc(row.mapName)}"
+                            placeholder="Nama game Roblox"
+                            class="input-field w-full px-3 py-2.5 rounded-lg text-sm"
+                            oninput="syncRow(${row.id})">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1 text-green-400/80">🔑 Place ID <span class="text-red-400">*</span></label>
+                        <input type="text" id="placeId_${row.id}"
+                            value="${esc(row.placeId)}"
+                            placeholder="Contoh: 189707"
+                            class="input-field w-full px-3 py-2.5 rounded-lg text-sm font-mono"
+                            oninput="syncRow(${row.id})">
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function updateQueueCount() {
+        document.getElementById('queueCount').textContent = rows.length;
+    }
+
+    // ============================================
+    // SEND ONE MAP TO DISCORD
+    // ============================================
+    async function sendOneToDiscord(data, idx, total) {
+        const now = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+        const embed = {
+            title: `🛡️ MAP TERDAFTAR${total > 1 ? ' (' + idx + '/' + total + ')' : ''} - Anti-Cheat List`,
+            color: 0x00ff88,
+            fields: [
+                { name: '🗺️ Nama Map',  value: data.mapName,                       inline: false },
+                { name: '🔑 Place ID',  value: '`' + data.placeId + '`',            inline: true  },
+                { name: '👤 Owner',     value: data.ownerName || '*Tidak diisi*',   inline: true  },
+                { name: '📝 Catatan',   value: data.note || '*Tidak ada catatan*',  inline: false },
+                { name: '🕒 Waktu',     value: now,                                 inline: false }
+            ],
+            footer: {
+                text: 'WarpahExploits - Map Anti-Cheat Registry',
+                icon_url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg'
+            },
+            timestamp: new Date().toISOString(),
+            thumbnail: {
+                url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg'
+            }
+        };
+
+        const res = await fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: 'WarpahExploits | Map Registry',
+                avatar_url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg',
+                embeds: [embed]
+            })
+        });
+
+        if (!res.ok) throw new Error('Webhook error: ' + res.status);
+        return true;
+    }
+
+    // ============================================
+    // SUBMIT ALL
+    // ============================================
+    async function submitAll() {
+        // sync all
+        rows.forEach(row => {
+            const n = document.getElementById('mapName_' + row.id);
+            const p = document.getElementById('placeId_' + row.id);
+            if (n) row.mapName = n.value.trim();
+            if (p) row.placeId = p.value.trim();
+        });
+
+        const ownerName = document.getElementById('ownerName').value.trim();
+        const note = document.getElementById('globalNote').value.trim();
+
+        // Validate
+        const errors = [];
+        const seenIds = new Set();
+
+        rows.forEach((row, idx) => {
+            const num = idx + 1;
+            if (!row.mapName) { errors.push('Baris #' + num + ': Nama Map wajib diisi!'); return; }
+            if (!row.placeId) { errors.push('Baris #' + num + ': Place ID wajib diisi!'); return; }
+            if (!/^\d+$/.test(row.placeId)) { errors.push('Baris #' + num + ': Place ID hanya boleh angka!'); return; }
+            if (seenIds.has(row.placeId)) { errors.push('Baris #' + num + ': Place ID ' + row.placeId + ' duplikat dalam batch!'); return; }
+            seenIds.add(row.placeId);
+            if (mapEntries.find(e => e.placeId === row.placeId)) {
+                errors.push('Baris #' + num + ': Place ID ' + row.placeId + ' sudah terdaftar!');
+            }
+        });
+
+        if (errors.length > 0) { showToast('⚠️ ' + errors[0], 'error'); return; }
+
+        if (DISCORD_WEBHOOK_URL === 'GANTI_DENGAN_WEBHOOK_URL_KAMU_DISINI') {
+            showToast('⚠️ Webhook URL belum diatur!', 'error');
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        btn.disabled = true;
+        document.getElementById('summaryBar').classList.remove('hidden');
+
+        const total = rows.length;
+        let successCount = 0;
+        const failedMaps = [];
+        const timeNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        const dateNow = new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const pct = Math.round((i / total) * 100);
+            document.getElementById('progressLabel').textContent = 'Mengirim ' + (i + 1) + ' / ' + total + '...';
+            document.getElementById('progressPct').textContent = pct + '%';
+            document.getElementById('progressFill').style.width = pct + '%';
+            btnText.textContent = '⏳ ' + (i + 1) + '/' + total + ' Mengirim...';
+
+            try {
+                await sendOneToDiscord({ mapName: row.mapName, placeId: row.placeId, ownerName, note }, i + 1, total);
+                const entry = {
+                    mapName: row.mapName,
+                    placeId: row.placeId,
+                    ownerName,
+                    note,
+                    time: timeNow,
+                    date: dateNow
+                };
+                mapEntries.push(entry);
+                saveMapEntries(); // 💾 save after each success
+                successCount++;
+                if (i < rows.length - 1) await sleep(600);
+            } catch (err) {
+                console.error(err);
+                failedMaps.push(row.mapName);
+            }
+        }
+
+        document.getElementById('progressLabel').textContent = 'Selesai! ' + successCount + '/' + total + ' berhasil';
+        document.getElementById('progressPct').textContent = '100%';
+        document.getElementById('progressFill').style.width = '100%';
+
+        renderMapList();
+
+        if (failedMaps.length === 0) {
+            showToast('✅ ' + successCount + ' map berhasil didaftarkan & tersimpan!', 'success');
+            // reset form
+            rows = [];
+            document.getElementById('ownerName').value = '';
+            document.getElementById('globalNote').value = '';
+            localStorage.removeItem(STORAGE_KEY_DRAFT); // clear draft after success
+            addRow();
+        } else {
+            showToast('⚠️ ' + successCount + ' berhasil, ' + failedMaps.length + ' gagal!', 'error');
+        }
+
+        btn.disabled = false;
+        btnText.textContent = '🛡️ KIRIM SEMUA MAP';
+        setTimeout(() => document.getElementById('summaryBar').classList.add('hidden'), 5000);
+    }
+
+    // ============================================
+    // RENDER MAP LIST
+    // ============================================
+    function renderMapList() {
+        const list = document.getElementById('mapList');
+        const empty = document.getElementById('emptyState');
+        const count = document.getElementById('listCount');
+        const totalEl = document.getElementById('totalMaps');
+        const clearBtn = document.getElementById('clearBtn');
+
+        const n = mapEntries.length;
+        count.textContent = n + ' Maps';
+        totalEl.textContent = n;
+        clearBtn.classList.toggle('hidden', n === 0);
+
+        if (n === 0) {
+            empty.style.display = 'block';
+            list.innerHTML = '';
+            return;
+        }
+
+        empty.style.display = 'none';
+        const reversed = [...mapEntries].reverse();
+        list.innerHTML = reversed.map((entry, idx) => `
+            <div class="glass-card rounded-xl p-4 border border-green-500/15 map-entry" style="animation-delay:${Math.min(idx, 10) * 0.04}s">
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <span class="text-xs font-bold text-green-400 glass-card px-2 py-0.5 rounded-full">#${String(mapEntries.length - idx).padStart(2,'0')}</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-400 status-badge flex-shrink-0"></span>
+                            <span class="text-xs text-green-400/60">Protected</span>
+                        </div>
+                        <h4 class="font-bold text-white text-sm truncate">${esc(entry.mapName)}</h4>
+                        <div class="flex items-center gap-1 mt-1 flex-wrap">
+                            <span class="text-xs text-gray-500">Place ID:</span>
+                            <span class="text-xs font-mono text-green-300 bg-green-500/10 px-2 py-0.5 rounded">${esc(entry.placeId)}</span>
+                        </div>
+                        ${entry.ownerName ? `<p class="text-xs text-gray-500 mt-1">👤 ${esc(entry.ownerName)}</p>` : ''}
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        <p class="text-xs text-gray-600">${entry.date || ''}</p>
+                        <p class="text-xs text-gray-600">${entry.time}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function clearList() {
+        if (!confirm('Hapus semua map dari list?\n⚠️ Data di browser akan terhapus!\n(Data di Discord tetap ada)')) return;
+        mapEntries = [];
+        saveMapEntries();
+        renderMapList();
+        showToast('🗑️ List berhasil dibersihkan', 'info');
+    }
+
+    // ============================================
+    // INIT — LOAD SAVED DATA
+    // ============================================
+    function init() {
+        // Load saved map entries
+        mapEntries = loadMapEntries();
+
+        if (mapEntries.length > 0) {
+            const badge = document.getElementById('savedBadge');
+            const badgeText = document.getElementById('savedBadgeText');
+            badge.classList.remove('hidden');
+            badgeText.textContent = '💾 ' + mapEntries.length + ' map dimuat dari penyimpanan lokal';
+            setTimeout(() => badge.classList.add('hidden'), 5000);
+        }
+
+        renderMapList();
+
+        // Load form draft
+        const draft = loadFormDraft();
+        if (draft) {
+            document.getElementById('ownerName').value = draft.ownerName || '';
+            document.getElementById('globalNote').value = draft.note || '';
+
+            if (draft.rows && draft.rows.length > 0) {
+                draft.rows.forEach(r => addRow(r.mapName || '', r.placeId || ''));
+            } else {
+                addRow();
+            }
+        } else {
+            addRow();
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
