@@ -32,6 +32,9 @@
         .input-field{background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.25);color:#fff;transition:all .3s ease;outline:none;}
         .input-field:focus{border-color:rgba(0,255,136,.6);box-shadow:0 0 15px rgba(0,255,136,.15);background:rgba(0,255,136,.06);}
         .input-field::placeholder{color:rgba(255,255,255,.3);}
+        .input-field-red{background:rgba(255,50,50,.05);border:1px solid rgba(255,50,50,.3);color:#fff;transition:all .3s ease;outline:none;}
+        .input-field-red:focus{border-color:rgba(255,50,50,.7);box-shadow:0 0 15px rgba(255,50,50,.15);background:rgba(255,50,50,.08);}
+        .input-field-red::placeholder{color:rgba(255,255,255,.3);}
         .map-row{animation:rowIn .3s ease forwards;opacity:0;transform:translateX(-10px);}
         @keyframes rowIn{to{opacity:1;transform:translateX(0)}}
         .map-entry{animation:entryIn .35s ease forwards;opacity:0;transform:translateY(14px);}
@@ -52,8 +55,27 @@
         .progress-bar{height:4px;border-radius:2px;background:rgba(0,255,136,.15);overflow:hidden;}
         .progress-fill{height:100%;background:linear-gradient(90deg,#00ff88,#00aa55);border-radius:2px;transition:width .4s ease;}
         .row-num{min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:rgba(0,255,136,.1);color:#00ff88;border:1px solid rgba(0,255,136,.25);flex-shrink:0;}
-        .save-indicator{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;padding:8px 18px;border-radius:30px;font-size:12px;font-weight:700;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.35);color:#00ff88;opacity:0;transition:opacity .3s ease;pointer-events:none;}
+        .save-indicator{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;padding:8px 18px;border-radius:30px;font-size:12px;font-weight:700;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.35);color:#00ff88;opacity:0;transition:opacity .3s ease;pointer-events:none;white-space:nowrap;}
         .save-indicator.show{opacity:1;}
+
+        /* PASSWORD MODAL */
+        .modal-overlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);background:rgba(0,0,0,0.85);}
+        .modal-overlay.hidden{display:none;}
+        .modal-box{background:linear-gradient(145deg,rgba(0,0,0,.95),rgba(20,0,0,.95));border:1px solid rgba(255,50,50,.35);border-radius:24px;padding:32px;max-width:400px;width:100%;box-shadow:0 0 60px rgba(255,50,50,.15);animation:modalIn .3s ease;}
+        @keyframes modalIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+        .pw-input{background:rgba(255,50,50,.05);border:1px solid rgba(255,50,50,.3);color:#fff;outline:none;transition:all .3s ease;width:100%;padding:14px 16px;border-radius:12px;font-size:15px;font-family:'Space Grotesk',sans-serif;letter-spacing:2px;}
+        .pw-input:focus{border-color:rgba(255,50,50,.7);box-shadow:0 0 20px rgba(255,50,50,.15);}
+        .pw-input::placeholder{color:rgba(255,255,255,.3);letter-spacing:0;}
+        .pw-input.shake{animation:shake .4s ease;}
+        @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+        .clear-confirm-btn{background:linear-gradient(135deg,#ff4040,#cc0000);border:none;cursor:pointer;transition:all .3s ease;box-shadow:0 0 20px rgba(255,50,50,.4);}
+        .clear-confirm-btn:hover{transform:translateY(-2px);box-shadow:0 0 35px rgba(255,50,50,.7);}
+        .clear-confirm-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+        .pw-dots{display:flex;gap:6px;justify-content:center;margin-top:10px;}
+        .pw-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,50,50,.2);border:1px solid rgba(255,50,50,.4);transition:all .2s ease;}
+        .pw-dot.filled{background:#ff4040;box-shadow:0 0 8px rgba(255,50,50,.6);}
+        .attempts-bar{height:3px;border-radius:2px;background:rgba(255,50,50,.15);overflow:hidden;margin-top:10px;}
+        .attempts-fill{height:100%;background:linear-gradient(90deg,#ff4040,#ff0000);border-radius:2px;transition:width .4s ease;}
     </style>
 </head>
 <body class="text-gray-100">
@@ -62,9 +84,70 @@
 <div class="bg-animated"></div>
 <div class="grid-bg"></div>
 <div id="particles"></div>
-
-<!-- Auto-save indicator -->
 <div class="save-indicator" id="saveIndicator">💾 Tersimpan otomatis</div>
+
+<!-- ===== PASSWORD MODAL ===== -->
+<div class="modal-overlay hidden" id="passwordModal">
+    <div class="modal-box">
+        <!-- Icon -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background:rgba(255,50,50,.1);border:1px solid rgba(255,50,50,.3);">
+                <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-black logo-font" style="color:#ff6060;">AKSES TERBATAS</h3>
+            <p class="text-gray-400 text-sm mt-2">Masukkan password untuk menghapus semua data map list</p>
+        </div>
+
+        <!-- Warning -->
+        <div class="rounded-xl p-3 mb-5" style="background:rgba(255,50,50,.08);border:1px solid rgba(255,50,50,.2);">
+            <p class="text-xs text-red-400 font-semibold text-center">⚠️ Tindakan ini tidak dapat dibatalkan!</p>
+        </div>
+
+        <!-- Password input -->
+        <div class="mb-2">
+            <label class="block text-sm font-bold mb-2 text-red-400">🔑 Password</label>
+            <div class="relative">
+                <input type="password" id="clearPassword" class="pw-input" placeholder="Masukkan password..."
+                    onkeydown="handlePasswordKey(event)" oninput="updateDots()">
+                <button onclick="togglePwVisibility()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors" id="eyeBtn">
+                    <svg id="eyeOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    <svg id="eyeClosed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                    </svg>
+                </button>
+            </div>
+            <!-- Dots indicator -->
+            <div class="pw-dots" id="pwDots">
+                <div class="pw-dot"></div><div class="pw-dot"></div><div class="pw-dot"></div>
+                <div class="pw-dot"></div><div class="pw-dot"></div><div class="pw-dot"></div>
+                <div class="pw-dot"></div><div class="pw-dot"></div>
+            </div>
+        </div>
+
+        <!-- Attempts -->
+        <div id="attemptsSection" class="hidden mb-4">
+            <p class="text-xs text-red-400 text-center mb-1" id="attemptsText">Password salah!</p>
+            <div class="attempts-bar">
+                <div class="attempts-fill" id="attemptsFill" style="width:100%"></div>
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-3 mt-5">
+            <button onclick="closePasswordModal()" class="outline-btn flex-1 py-3 rounded-xl font-bold text-sm">
+                Batal
+            </button>
+            <button onclick="confirmClear()" id="confirmClearBtn" class="clear-confirm-btn flex-1 py-3 rounded-xl font-black text-sm text-white">
+                🗑️ HAPUS SEMUA
+            </button>
+        </div>
+    </div>
+</div>
 
 <!-- HEADER -->
 <header class="fixed top-0 w-full z-50 glass-card border-b border-green-500/30">
@@ -77,12 +160,11 @@
             </div>
         </div>
         <div class="flex items-center gap-3">
-            <!-- Storage info -->
-            <div class="glass-card px-3 py-2 rounded-xl flex items-center gap-2 cursor-pointer" title="Data tersimpan di browser" id="storageInfo">
+            <div class="glass-card px-3 py-2 rounded-xl flex items-center gap-2">
                 <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
                 </svg>
-                <span class="text-xs text-green-400 font-semibold hidden sm:inline" id="storageLabel">AUTO-SAVE ON</span>
+                <span class="text-xs text-green-400 font-semibold hidden sm:inline">AUTO-SAVE ON</span>
             </div>
             <div class="glass-card px-3 py-2 rounded-xl flex items-center gap-2">
                 <div class="w-2 h-2 rounded-full bg-green-400 status-badge"></div>
@@ -102,7 +184,7 @@
         </div>
         <h2 class="text-4xl md:text-6xl font-black logo-font glow-text mb-3">MAP REGISTRY</h2>
         <p class="text-green-400 font-semibold mb-2">Anti-Cheat Protection System</p>
-        <p class="text-gray-400 text-sm max-w-xl mx-auto">Daftarkan satu atau banyak map Roblox sekaligus. Data <strong class="text-green-400">tersimpan otomatis</strong> di browser — tidak hilang walaupun halaman di-refresh.</p>
+        <p class="text-gray-400 text-sm max-w-xl mx-auto">Daftarkan satu atau banyak map Roblox sekaligus. Data <strong class="text-green-400">tersimpan otomatis</strong> di browser.</p>
     </div>
 </section>
 
@@ -145,18 +227,14 @@
                 <span id="rowCountBadge" class="glass-card px-3 py-1 rounded-full text-xs font-bold text-green-400">1 Map</span>
             </div>
 
-            <!-- Owner name shared -->
             <div class="mb-5">
                 <label class="block text-sm font-bold mb-2 text-green-400">👤 Nama Owner <span class="text-gray-500 font-normal text-xs">(opsional, untuk semua map)</span></label>
                 <input type="text" id="ownerName" placeholder="Username Roblox kamu"
-                    class="input-field w-full px-4 py-3 rounded-xl text-sm"
-                    oninput="saveFormDraft()">
+                    class="input-field w-full px-4 py-3 rounded-xl text-sm" oninput="saveFormDraft()">
             </div>
 
-            <!-- MAP ROWS -->
             <div id="mapRowsContainer" class="space-y-3 mb-4"></div>
 
-            <!-- ADD ROW -->
             <button type="button" onclick="addRow()" class="outline-btn w-full py-3 rounded-xl font-bold text-sm mb-5 flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -164,20 +242,16 @@
                 + TAMBAH MAP LAGI
             </button>
 
-            <!-- Notes shared -->
             <div class="mb-6">
                 <label class="block text-sm font-bold mb-2 text-green-400">📝 Catatan <span class="text-gray-500 font-normal text-xs">(opsional)</span></label>
-                <textarea id="globalNote" rows="2" placeholder="Catatan tambahan untuk semua map..."
-                    class="input-field w-full px-4 py-3 rounded-xl text-sm resize-none"
-                    oninput="saveFormDraft()"></textarea>
+                <textarea id="globalNote" rows="2" placeholder="Catatan tambahan..."
+                    class="input-field w-full px-4 py-3 rounded-xl text-sm resize-none" oninput="saveFormDraft()"></textarea>
             </div>
 
-            <!-- SUBMIT ALL -->
             <button id="submitBtn" onclick="submitAll()" class="neon-btn w-full py-4 rounded-xl font-black text-lg text-black">
                 <span id="btnText">🛡️ KIRIM SEMUA MAP</span>
             </button>
 
-            <!-- Progress -->
             <div id="summaryBar" class="mt-4 hidden">
                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                     <span id="progressLabel">Mengirim...</span>
@@ -188,12 +262,10 @@
                 </div>
             </div>
 
-            <!-- Hint -->
             <div class="mt-5 glass-card rounded-xl p-4 border border-blue-500/20 bg-blue-500/5">
                 <p class="text-xs font-bold text-blue-400 mb-1">💡 Cara Cari Place ID:</p>
                 <p class="text-xs text-gray-400">Buka game di browser Roblox → lihat URL:<br>
-                <span class="font-mono text-green-400">roblox.com/games/<strong class="text-white">189707</strong>/nama-game</span><br>
-                Angka setelah <span class="font-mono text-white">/games/</span> adalah Place ID.</p>
+                <span class="font-mono text-green-400">roblox.com/games/<strong class="text-white">189707</strong>/nama-game</span></p>
             </div>
         </div>
 
@@ -214,11 +286,17 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <span id="listCount" class="glass-card px-3 py-1 rounded-full text-xs font-bold text-green-400 status-badge">0 Maps</span>
-                        <button onclick="clearList()" id="clearBtn" class="danger-btn px-2 py-1 rounded-lg text-xs hidden">✕ Clear</button>
+                        <!-- Clear button — now opens password modal -->
+                        <button onclick="openPasswordModal()" id="clearBtn"
+                            class="danger-btn px-3 py-1.5 rounded-lg text-xs hidden flex items-center gap-1.5 font-bold">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            Clear
+                        </button>
                     </div>
                 </div>
 
-                <!-- saved badge -->
                 <div id="savedBadge" class="hidden mb-4 glass-card rounded-xl p-3 border border-green-500/20 bg-green-500/5 flex items-center gap-2">
                     <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
@@ -237,7 +315,7 @@
 
             <div class="glass-card rounded-2xl p-4 border border-yellow-500/20 bg-yellow-500/5">
                 <p class="text-xs font-bold text-yellow-400 mb-1">💾 Auto-Save Info:</p>
-                <p class="text-xs text-gray-400">Map list tersimpan otomatis di browser (localStorage). Data tetap ada walaupun halaman ditutup atau di-refresh. Data hanya hilang jika kamu klik <span class="text-red-400 font-semibold">Clear</span> atau hapus cache browser.</p>
+                <p class="text-xs text-gray-400">Map list tersimpan otomatis di browser. Untuk menghapus list diperlukan <span class="text-red-400 font-semibold">password admin</span>.</p>
             </div>
         </div>
     </div>
@@ -249,7 +327,7 @@
         <img src="https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg" alt="Logo" class="logo-img w-9 h-9">
         <h1 class="text-xl font-black logo-font glow-text">WarpahExploits</h1>
     </div>
-    <p class="text-gray-500 text-sm">© 2024 WarpahExploits. All Rights Reserved.</p>
+    <p class="text-gray-500 text-sm">© 2025 WarpahExploits. All Rights Reserved.</p>
     <p class="text-green-400/60 text-xs mt-1">🇮🇩 Made with 💚 in Indonesia</p>
 </footer>
 
@@ -260,36 +338,161 @@
     const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1475522525252292722/As_x9OQT2uaICZ31pgTC4Guiemryrd-49qSaQohDKI-MJ8PF29axMTXVTG24MD-Ef613";
     // ============================================
 
+    const CLEAR_PASSWORD     = "WarpahExploits2026";
+    const MAX_ATTEMPTS       = 5;
     const STORAGE_KEY_MAPS   = 'warpah_map_entries';
     const STORAGE_KEY_DRAFT  = 'warpah_form_draft';
 
-    let mapEntries = [];
-    let rows = [];
-    let rowId = 0;
-    let saveTimer = null;
+    let mapEntries   = [];
+    let rows         = [];
+    let rowId        = 0;
+    let saveTimer    = null;
+    let pwAttempts   = 0;
+    let pwLocked     = false;
+    let lockTimer    = null;
 
     // ============================================
-    // LOCALSTORAGE HELPERS
+    // PASSWORD MODAL
+    // ============================================
+    function openPasswordModal() {
+        if (mapEntries.length === 0) return;
+        document.getElementById('passwordModal').classList.remove('hidden');
+        document.getElementById('clearPassword').value = '';
+        document.getElementById('attemptsSection').classList.add('hidden');
+        updateDots();
+        setTimeout(() => document.getElementById('clearPassword').focus(), 100);
+    }
+
+    function closePasswordModal() {
+        document.getElementById('passwordModal').classList.add('hidden');
+        document.getElementById('clearPassword').value = '';
+        document.getElementById('attemptsSection').classList.add('hidden');
+        updateDots();
+        // reset attempts if modal closed cleanly
+        if (!pwLocked) pwAttempts = 0;
+    }
+
+    function handlePasswordKey(e) {
+        if (e.key === 'Enter') confirmClear();
+        if (e.key === 'Escape') closePasswordModal();
+    }
+
+    function togglePwVisibility() {
+        const input = document.getElementById('clearPassword');
+        const open  = document.getElementById('eyeOpen');
+        const closed = document.getElementById('eyeClosed');
+        if (input.type === 'password') {
+            input.type = 'text';
+            open.classList.add('hidden');
+            closed.classList.remove('hidden');
+        } else {
+            input.type = 'password';
+            open.classList.remove('hidden');
+            closed.classList.add('hidden');
+        }
+    }
+
+    function updateDots() {
+        const val  = document.getElementById('clearPassword').value;
+        const dots = document.querySelectorAll('.pw-dot');
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('filled', i < val.length);
+        });
+    }
+
+    function confirmClear() {
+        if (pwLocked) {
+            showToast('🔒 Terlalu banyak percobaan! Tunggu 30 detik.', 'error');
+            return;
+        }
+
+        const input    = document.getElementById('clearPassword');
+        const entered  = input.value;
+        const btn      = document.getElementById('confirmClearBtn');
+        const attempts = document.getElementById('attemptsSection');
+        const attText  = document.getElementById('attemptsText');
+        const attFill  = document.getElementById('attemptsFill');
+
+        if (entered === CLEAR_PASSWORD) {
+            // ✅ Correct
+            pwAttempts = 0;
+            closePasswordModal();
+            // actual clear
+            mapEntries = [];
+            saveMapEntries();
+            renderMapList();
+            showToast('🗑️ Semua map berhasil dihapus', 'info');
+        } else {
+            // ❌ Wrong
+            pwAttempts++;
+            input.value = '';
+            updateDots();
+
+            // Shake animation
+            input.classList.remove('shake');
+            void input.offsetWidth;
+            input.classList.add('shake');
+            setTimeout(() => input.classList.remove('shake'), 400);
+
+            const remaining = MAX_ATTEMPTS - pwAttempts;
+            attempts.classList.remove('hidden');
+
+            if (pwAttempts >= MAX_ATTEMPTS) {
+                // Lock for 30 seconds
+                pwLocked = true;
+                btn.disabled = true;
+                input.disabled = true;
+                attText.textContent = '🔒 Terlalu banyak percobaan! Menunggu 30 detik...';
+                attFill.style.width = '100%';
+                attFill.style.background = '#ff0000';
+
+                let countdown = 30;
+                lockTimer = setInterval(() => {
+                    countdown--;
+                    attText.textContent = `🔒 Locked! Tunggu ${countdown} detik...`;
+                    attFill.style.width = (countdown / 30 * 100) + '%';
+                    if (countdown <= 0) {
+                        clearInterval(lockTimer);
+                        pwLocked    = false;
+                        pwAttempts  = 0;
+                        btn.disabled   = false;
+                        input.disabled = false;
+                        attText.textContent = 'Silakan coba lagi.';
+                        attFill.style.width = '100%';
+                        attFill.style.background = '';
+                        input.focus();
+                    }
+                }, 1000);
+
+                showToast('🔒 Akses dikunci 30 detik!', 'error');
+            } else {
+                const pct = (remaining / MAX_ATTEMPTS) * 100;
+                attFill.style.width = pct + '%';
+                attText.textContent = `❌ Password salah! Sisa percobaan: ${remaining}`;
+                showToast('❌ Password salah! Sisa ' + remaining + ' percobaan', 'error');
+                setTimeout(() => input.focus(), 100);
+            }
+        }
+    }
+
+    // Close modal on overlay click
+    document.getElementById('passwordModal').addEventListener('click', function(e) {
+        if (e.target === this) closePasswordModal();
+    });
+
+    // ============================================
+    // LOCALSTORAGE
     // ============================================
     function saveMapEntries() {
-        try {
-            localStorage.setItem(STORAGE_KEY_MAPS, JSON.stringify(mapEntries));
-        } catch(e) { console.warn('localStorage full:', e); }
+        try { localStorage.setItem(STORAGE_KEY_MAPS, JSON.stringify(mapEntries)); } catch(e) {}
     }
-
     function loadMapEntries() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY_MAPS);
-            return raw ? JSON.parse(raw) : [];
-        } catch(e) { return []; }
+        try { const r = localStorage.getItem(STORAGE_KEY_MAPS); return r ? JSON.parse(r) : []; } catch(e) { return []; }
     }
-
     function saveFormDraft() {
-        // debounce 600ms
         clearTimeout(saveTimer);
         saveTimer = setTimeout(() => {
             try {
-                // sync rows first
                 rows.forEach(row => {
                     const n = document.getElementById('mapName_' + row.id);
                     const p = document.getElementById('placeId_' + row.id);
@@ -306,14 +509,9 @@
             } catch(e) {}
         }, 600);
     }
-
     function loadFormDraft() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY_DRAFT);
-            return raw ? JSON.parse(raw) : null;
-        } catch(e) { return null; }
+        try { const r = localStorage.getItem(STORAGE_KEY_DRAFT); return r ? JSON.parse(r) : null; } catch(e) { return null; }
     }
-
     function flashSaveIndicator() {
         const el = document.getElementById('saveIndicator');
         el.classList.add('show');
@@ -356,11 +554,10 @@
         d.textContent = String(s || '');
         return d.innerHTML;
     }
-
     function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
     // ============================================
-    // ROW MANAGEMENT
+    // ROWS
     // ============================================
     function addRow(mapName = '', placeId = '') {
         rowId++;
@@ -375,10 +572,7 @@
     }
 
     function removeRow(id) {
-        if (rows.length <= 1) {
-            showToast('⚠️ Minimal harus ada 1 map!', 'error');
-            return;
-        }
+        if (rows.length <= 1) { showToast('⚠️ Minimal harus ada 1 map!', 'error'); return; }
         rows = rows.filter(r => r.id !== id);
         renderRows();
         updateQueueCount();
@@ -398,36 +592,28 @@
     function renderRows() {
         const container = document.getElementById('mapRowsContainer');
         document.getElementById('rowCountBadge').textContent = rows.length + ' Map' + (rows.length > 1 ? 's' : '');
-
         container.innerHTML = rows.map((row, idx) => `
-            <div class="map-row glass-card rounded-xl p-4 border border-green-500/15" id="row_${row.id}" style="animation-delay:${idx * 0.04}s">
+            <div class="map-row glass-card rounded-xl p-4 border border-green-500/15" id="row_${row.id}" style="animation-delay:${idx*.04}s">
                 <div class="flex items-center gap-2 mb-3">
-                    <div class="row-num">#${String(idx + 1).padStart(2, '0')}</div>
+                    <div class="row-num">#${String(idx+1).padStart(2,'0')}</div>
                     <span class="text-xs text-gray-400 flex-1 font-semibold">Map Entry</span>
                     ${rows.length > 1 ? `
                     <button onclick="removeRow(${row.id})" class="danger-btn px-2 py-1 rounded-lg text-xs flex items-center gap-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                        Hapus
+                        </svg>Hapus
                     </button>` : ''}
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold mb-1 text-green-400/80">🗺️ Nama Map <span class="text-red-400">*</span></label>
-                        <input type="text" id="mapName_${row.id}"
-                            value="${esc(row.mapName)}"
-                            placeholder="Nama game Roblox"
-                            class="input-field w-full px-3 py-2.5 rounded-lg text-sm"
-                            oninput="syncRow(${row.id})">
+                        <input type="text" id="mapName_${row.id}" value="${esc(row.mapName)}" placeholder="Nama game Roblox"
+                            class="input-field w-full px-3 py-2.5 rounded-lg text-sm" oninput="syncRow(${row.id})">
                     </div>
                     <div>
                         <label class="block text-xs font-bold mb-1 text-green-400/80">🔑 Place ID <span class="text-red-400">*</span></label>
-                        <input type="text" id="placeId_${row.id}"
-                            value="${esc(row.placeId)}"
-                            placeholder="Contoh: 189707"
-                            class="input-field w-full px-3 py-2.5 rounded-lg text-sm font-mono"
-                            oninput="syncRow(${row.id})">
+                        <input type="text" id="placeId_${row.id}" value="${esc(row.placeId)}" placeholder="Contoh: 189707"
+                            class="input-field w-full px-3 py-2.5 rounded-lg text-sm font-mono" oninput="syncRow(${row.id})">
                     </div>
                 </div>
             </div>
@@ -439,7 +625,7 @@
     }
 
     // ============================================
-    // SEND ONE MAP TO DISCORD
+    // SEND TO DISCORD
     // ============================================
     async function sendOneToDiscord(data, idx, total) {
         const now = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
@@ -447,22 +633,19 @@
             title: `🛡️ MAP TERDAFTAR${total > 1 ? ' (' + idx + '/' + total + ')' : ''} - Anti-Cheat List`,
             color: 0x00ff88,
             fields: [
-                { name: '🗺️ Nama Map',  value: data.mapName,                       inline: false },
-                { name: '🔑 Place ID',  value: '`' + data.placeId + '`',            inline: true  },
-                { name: '👤 Owner',     value: data.ownerName || '*Tidak diisi*',   inline: true  },
-                { name: '📝 Catatan',   value: data.note || '*Tidak ada catatan*',  inline: false },
-                { name: '🕒 Waktu',     value: now,                                 inline: false }
+                { name: '🗺️ Nama Map', value: data.mapName, inline: false },
+                { name: '🔑 Place ID', value: '`' + data.placeId + '`', inline: true },
+                { name: '👤 Owner',    value: data.ownerName || '*Tidak diisi*', inline: true },
+                { name: '📝 Catatan',  value: data.note || '*Tidak ada catatan*', inline: false },
+                { name: '🕒 Waktu',    value: now, inline: false }
             ],
             footer: {
                 text: 'WarpahExploits - Map Anti-Cheat Registry',
                 icon_url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg'
             },
             timestamp: new Date().toISOString(),
-            thumbnail: {
-                url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg'
-            }
+            thumbnail: { url: 'https://res.cloudinary.com/dsjctfzj1/image/upload/v1760351559/IMG-20251007-WA0626_dv8s8r.jpg' }
         };
-
         const res = await fetch(DISCORD_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -472,7 +655,6 @@
                 embeds: [embed]
             })
         });
-
         if (!res.ok) throw new Error('Webhook error: ' + res.status);
         return true;
     }
@@ -481,7 +663,6 @@
     // SUBMIT ALL
     // ============================================
     async function submitAll() {
-        // sync all
         rows.forEach(row => {
             const n = document.getElementById('mapName_' + row.id);
             const p = document.getElementById('placeId_' + row.id);
@@ -490,18 +671,16 @@
         });
 
         const ownerName = document.getElementById('ownerName').value.trim();
-        const note = document.getElementById('globalNote').value.trim();
-
-        // Validate
-        const errors = [];
-        const seenIds = new Set();
+        const note      = document.getElementById('globalNote').value.trim();
+        const errors    = [];
+        const seenIds   = new Set();
 
         rows.forEach((row, idx) => {
             const num = idx + 1;
             if (!row.mapName) { errors.push('Baris #' + num + ': Nama Map wajib diisi!'); return; }
             if (!row.placeId) { errors.push('Baris #' + num + ': Place ID wajib diisi!'); return; }
             if (!/^\d+$/.test(row.placeId)) { errors.push('Baris #' + num + ': Place ID hanya boleh angka!'); return; }
-            if (seenIds.has(row.placeId)) { errors.push('Baris #' + num + ': Place ID ' + row.placeId + ' duplikat dalam batch!'); return; }
+            if (seenIds.has(row.placeId)) { errors.push('Baris #' + num + ': Place ID ' + row.placeId + ' duplikat!'); return; }
             seenIds.add(row.placeId);
             if (mapEntries.find(e => e.placeId === row.placeId)) {
                 errors.push('Baris #' + num + ': Place ID ' + row.placeId + ' sudah terdaftar!');
@@ -509,71 +688,55 @@
         });
 
         if (errors.length > 0) { showToast('⚠️ ' + errors[0], 'error'); return; }
-
         if (DISCORD_WEBHOOK_URL === 'GANTI_DENGAN_WEBHOOK_URL_KAMU_DISINI') {
-            showToast('⚠️ Webhook URL belum diatur!', 'error');
-            return;
+            showToast('⚠️ Webhook URL belum diatur!', 'error'); return;
         }
 
-        const btn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
+        const btn    = document.getElementById('submitBtn');
+        const btnTxt = document.getElementById('btnText');
         btn.disabled = true;
         document.getElementById('summaryBar').classList.remove('hidden');
 
-        const total = rows.length;
-        let successCount = 0;
-        const failedMaps = [];
+        const total   = rows.length;
+        let success   = 0;
+        const failed  = [];
         const timeNow = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        const dateNow = new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+        const dateNow = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
 
         for (let i = 0; i < rows.length; i++) {
             const row = rows[i];
             const pct = Math.round((i / total) * 100);
-            document.getElementById('progressLabel').textContent = 'Mengirim ' + (i + 1) + ' / ' + total + '...';
+            document.getElementById('progressLabel').textContent = 'Mengirim ' + (i+1) + ' / ' + total + '...';
             document.getElementById('progressPct').textContent = pct + '%';
             document.getElementById('progressFill').style.width = pct + '%';
-            btnText.textContent = '⏳ ' + (i + 1) + '/' + total + ' Mengirim...';
-
+            btnTxt.textContent = '⏳ ' + (i+1) + '/' + total + ' Mengirim...';
             try {
-                await sendOneToDiscord({ mapName: row.mapName, placeId: row.placeId, ownerName, note }, i + 1, total);
-                const entry = {
-                    mapName: row.mapName,
-                    placeId: row.placeId,
-                    ownerName,
-                    note,
-                    time: timeNow,
-                    date: dateNow
-                };
-                mapEntries.push(entry);
-                saveMapEntries(); // 💾 save after each success
-                successCount++;
+                await sendOneToDiscord({ mapName: row.mapName, placeId: row.placeId, ownerName, note }, i+1, total);
+                mapEntries.push({ mapName: row.mapName, placeId: row.placeId, ownerName, note, time: timeNow, date: dateNow });
+                saveMapEntries();
+                success++;
                 if (i < rows.length - 1) await sleep(600);
-            } catch (err) {
-                console.error(err);
-                failedMaps.push(row.mapName);
-            }
+            } catch(err) { console.error(err); failed.push(row.mapName); }
         }
 
-        document.getElementById('progressLabel').textContent = 'Selesai! ' + successCount + '/' + total + ' berhasil';
+        document.getElementById('progressLabel').textContent = 'Selesai! ' + success + '/' + total + ' berhasil';
         document.getElementById('progressPct').textContent = '100%';
         document.getElementById('progressFill').style.width = '100%';
-
         renderMapList();
 
-        if (failedMaps.length === 0) {
-            showToast('✅ ' + successCount + ' map berhasil didaftarkan & tersimpan!', 'success');
-            // reset form
+        if (failed.length === 0) {
+            showToast('✅ ' + success + ' map berhasil didaftarkan & tersimpan!', 'success');
             rows = [];
             document.getElementById('ownerName').value = '';
             document.getElementById('globalNote').value = '';
-            localStorage.removeItem(STORAGE_KEY_DRAFT); // clear draft after success
+            localStorage.removeItem(STORAGE_KEY_DRAFT);
             addRow();
         } else {
-            showToast('⚠️ ' + successCount + ' berhasil, ' + failedMaps.length + ' gagal!', 'error');
+            showToast('⚠️ ' + success + ' berhasil, ' + failed.length + ' gagal!', 'error');
         }
 
         btn.disabled = false;
-        btnText.textContent = '🛡️ KIRIM SEMUA MAP';
+        btnTxt.textContent = '🛡️ KIRIM SEMUA MAP';
         setTimeout(() => document.getElementById('summaryBar').classList.add('hidden'), 5000);
     }
 
@@ -581,31 +744,24 @@
     // RENDER MAP LIST
     // ============================================
     function renderMapList() {
-        const list = document.getElementById('mapList');
-        const empty = document.getElementById('emptyState');
-        const count = document.getElementById('listCount');
+        const list    = document.getElementById('mapList');
+        const empty   = document.getElementById('emptyState');
+        const count   = document.getElementById('listCount');
         const totalEl = document.getElementById('totalMaps');
         const clearBtn = document.getElementById('clearBtn');
-
         const n = mapEntries.length;
         count.textContent = n + ' Maps';
         totalEl.textContent = n;
         clearBtn.classList.toggle('hidden', n === 0);
-
-        if (n === 0) {
-            empty.style.display = 'block';
-            list.innerHTML = '';
-            return;
-        }
-
+        if (n === 0) { empty.style.display = 'block'; list.innerHTML = ''; return; }
         empty.style.display = 'none';
-        const reversed = [...mapEntries].reverse();
-        list.innerHTML = reversed.map((entry, idx) => `
-            <div class="glass-card rounded-xl p-4 border border-green-500/15 map-entry" style="animation-delay:${Math.min(idx, 10) * 0.04}s">
+        const rev = [...mapEntries].reverse();
+        list.innerHTML = rev.map((entry, idx) => `
+            <div class="glass-card rounded-xl p-4 border border-green-500/15 map-entry" style="animation-delay:${Math.min(idx,10)*.04}s">
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-1.5">
-                            <span class="text-xs font-bold text-green-400 glass-card px-2 py-0.5 rounded-full">#${String(mapEntries.length - idx).padStart(2,'0')}</span>
+                            <span class="text-xs font-bold text-green-400 glass-card px-2 py-0.5 rounded-full">#${String(mapEntries.length-idx).padStart(2,'0')}</span>
                             <span class="w-1.5 h-1.5 rounded-full bg-green-400 status-badge flex-shrink-0"></span>
                             <span class="text-xs text-green-400/60">Protected</span>
                         </div>
@@ -617,7 +773,7 @@
                         ${entry.ownerName ? `<p class="text-xs text-gray-500 mt-1">👤 ${esc(entry.ownerName)}</p>` : ''}
                     </div>
                     <div class="text-right flex-shrink-0">
-                        <p class="text-xs text-gray-600">${entry.date || ''}</p>
+                        <p class="text-xs text-gray-600">${entry.date||''}</p>
                         <p class="text-xs text-gray-600">${entry.time}</p>
                     </div>
                 </div>
@@ -625,45 +781,26 @@
         `).join('');
     }
 
-    function clearList() {
-        if (!confirm('Hapus semua map dari list?\n⚠️ Data di browser akan terhapus!\n(Data di Discord tetap ada)')) return;
-        mapEntries = [];
-        saveMapEntries();
-        renderMapList();
-        showToast('🗑️ List berhasil dibersihkan', 'info');
-    }
-
     // ============================================
-    // INIT — LOAD SAVED DATA
+    // INIT
     // ============================================
     function init() {
-        // Load saved map entries
         mapEntries = loadMapEntries();
-
         if (mapEntries.length > 0) {
             const badge = document.getElementById('savedBadge');
-            const badgeText = document.getElementById('savedBadgeText');
+            document.getElementById('savedBadgeText').textContent = '💾 ' + mapEntries.length + ' map dimuat dari penyimpanan lokal';
             badge.classList.remove('hidden');
-            badgeText.textContent = '💾 ' + mapEntries.length + ' map dimuat dari penyimpanan lokal';
             setTimeout(() => badge.classList.add('hidden'), 5000);
         }
-
         renderMapList();
-
-        // Load form draft
         const draft = loadFormDraft();
         if (draft) {
             document.getElementById('ownerName').value = draft.ownerName || '';
             document.getElementById('globalNote').value = draft.note || '';
-
             if (draft.rows && draft.rows.length > 0) {
                 draft.rows.forEach(r => addRow(r.mapName || '', r.placeId || ''));
-            } else {
-                addRow();
-            }
-        } else {
-            addRow();
-        }
+            } else { addRow(); }
+        } else { addRow(); }
     }
 
     init();
